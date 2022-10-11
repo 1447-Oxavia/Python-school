@@ -84,6 +84,9 @@ class Graph(object):
         laenge = ((nameStartKnoten.x - nameZielKnoten.x) ** 2 + (nameStartKnoten.y - nameZielKnoten.y) ** 2) ** (0.5)
         self.KantenMenge.append([nameStartKnoten.name , nameZielKnoten.name, laenge, besucht.besucht])
 
+    def getDistance(self, startKnoten, zielKnoten):
+        return ((startKnoten.x - zielKnoten.x) ** 2 + (startKnoten.y - zielKnoten.y) ** 2) ** 0.5
+
     def delKante(self, nameStartKnoten:int, nameZielKnoten:int):
         for kante in self.KantenMenge:
             if kante[0] == nameStartKnoten and kante[1] == nameZielKnoten:
@@ -94,9 +97,9 @@ class Graph(object):
         nachbarn = []
         for kante in self.KantenMenge:
             if kante[0] == nameKnoten:
-                nachbarn.append(kante)
+                nachbarn.append(self.getKnoten(kante[1]))
             elif kante[1] == nameKnoten:
-                nachbarn.append(kante)
+                nachbarn.append(self.getKnoten(kante[0]))
         return nachbarn
 
         print(nachbarn)
@@ -111,8 +114,8 @@ def getVerbindung():
 def randomGraph(anzahlKnoten:int):
 
     for i in range(anzahlKnoten):
-        xKoordinate = random.randint(0,100)
-        yKoordinate = random.randint(0,100)
+        xKoordinate = int(random.randint(0,100))
+        yKoordinate = int(random.randint(0,100))
         besucht = False
         g.addKnoten(i, xKoordinate, yKoordinate, besucht)
 
@@ -124,46 +127,38 @@ def randomGraph(anzahlKnoten:int):
                 continue
             else:
                 g.addKante(g.KnotenMenge[knoten.name], g.KnotenMenge[i+1], g.KnotenMenge[knoten.besucht])
-
-    print(g.KantenMenge)
-    print(g.KnotenMenge)
+    
 randomGraph(10)
 
-def nearestNeighbour(g:Graph,startKnoten:int):
-    A = []
-    besuchteKnoten = [startKnoten]
-    fremdeKnoten = g.getAlleKnoten
+xKoordinate = int(random.randint(0,100))
+yKoordinate = int(random.randint(0,100))
+
+def nearestNeighbour(g:Graph, startKnoten:int, xKoordinate:int, yKoordinate:int, besucht:bool):
+
+    besuchteKnoten = [Knoten(startKnoten, xKoordinate, yKoordinate, besucht)]
+    fremdeKnoten = g.getAlleKnoten()
+    erster = besuchteKnoten[0]
     naesterNachbar = 0
-    kuerzesterWeg = 100
-
-    while len(besuchteKnoten) != 0:
-        print(len(besuchteKnoten))
-        print(startKnoten)
-        nachbarn = g.getAlleNachbarn(startKnoten)
-       # del nachbarn('2')
-
-        for nachbarKnoten in nachbarn:
-            print(nachbarKnoten)
-            print(nachbarKnoten[2])
-            if kuerzesterWeg > nachbarKnoten[2] and nachbarKnoten[3] == False:
-                kuerzesterWeg = nachbarKnoten[2]
-                naesterNachbar = nachbarKnoten[0]
-                print(kuerzesterWeg)
-            nachbarKnoten[3] = True
-
-        A.append(naesterNachbar)
-        print(startKnoten)
-        print(kuerzesterWeg)
-        print(nachbarKnoten[3])
-        print(A)
-        #print(int(besuchteKnoten[startKnoten]))
-       # fremdeKnoten = []
-        besuchteKnoten.pop(0)
-        #print(len(besuchteKnoten))
-
-        startKnoten = naesterNachbar
     
-nearestNeighbour(g,2)
+    for i in range(len(fremdeKnoten)-1):
+        kuerzesterWeg = 100
+        ausgangsKnoten = besuchteKnoten[0]
+        nachbarn = g.getAlleNachbarn(ausgangsKnoten.name)
+              
+        for nachbar in nachbarn:     
+            y = nachbar.name
+            distance = g.getDistance(ausgangsKnoten, nachbar)
+            
+            if kuerzesterWeg > distance and nachbar.besucht == False:
+                kuerzesterWeg = distance
+                naehsterNachbar = nachbar
+            nachbar.besucht = True
+        besuchteKnoten.append(nachbar)   
+                    
+        startKnoten = naehsterNachbar
+    print("besuchteKnoten: ",besuchteKnoten)
+    
+nearestNeighbour(g,0,xKoordinate,yKoordinate, True)
 
 
 
@@ -171,15 +166,5 @@ nearestNeighbour(g,2)
 
 
 
-#x = [1,2,3,4,5,6,7,8,9,10]
-#y = [2,4,5,7,6,8,9,11,12,12]
-
-#plt.scatter(x, y, label= 'Sterne', color= 'green', marker= '*', s=30)
-
-#plt.xlabel('x - axis') 
-#plt.ylabel('y - axis') 
-#plt.title('My scatter plot!') 
-#plt.legend()
 
 
-#plt.show()
