@@ -1,0 +1,67 @@
+import random
+from Knoten import *
+from Graph import Graph
+
+g = Graph()
+
+def randomGraph(anzahlKnoten:int, besucht:bool):
+        for i in range(anzahlKnoten):
+            xKoordinate = int(random.randint(0,100))
+            yKoordinate = int(random.randint(0,100))
+            g.addKnoten(i, xKoordinate, yKoordinate, besucht)
+
+        for knoten in g.KnotenMenge:
+            for i in range(len(g.KnotenMenge)):
+                if i+1 == anzahlKnoten:
+                    break
+                elif knoten.name >= i+1:
+                    continue
+                else:
+                    g.addKante(g.KnotenMenge[knoten.name], g.KnotenMenge[i+1], g.KnotenMenge[knoten.besucht])
+
+randomGraph(3, False)
+print(g.KnotenMenge)
+
+distanz = []
+
+def primAlgorithmus(g:Graph, startKnotenName:int):
+    startKnoten = g.getKnoten(startKnotenName)
+    startKnoten.besucht = True
+    besuchteKnoten = [startKnoten]
+    fremdeKnoten = []
+    
+    for knoten in g.getAlleKnoten():
+        if not knoten.name == startKnoten.name:
+            fremdeKnoten.append(knoten)
+
+    erster = besuchteKnoten[0]
+
+    for i in range(len(fremdeKnoten)):
+        ausgangsKnoten = besuchteKnoten[0]
+        nachbarn = g.getAlleNachbarn(ausgangsKnoten.name)
+        
+        for nachbar in nachbarn:
+            distance = g.getDistance(ausgangsKnoten, nachbar)
+            #g.delKante(ausgangsKnoten,nachbar)
+            distanz.append(distance)
+            geringsteKante = min(distanz)
+
+            for d in g.KantenMenge:
+                if geringsteKante = d[3]:
+                    name = d[1]
+                    besuchteKnoten.append(name)
+                    fremdeKnoten.remove(d)
+                    
+    print(geringsteKante)
+
+            
+
+
+startKnoten = 1
+
+primAlgorithmus(g, startKnoten)
+print(distanz)
+        
+
+    
+        
